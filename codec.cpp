@@ -1,11 +1,28 @@
+/*
+1.这里有个坑，必须要读写文本 
+2.自己打错字了，data打成了date
+3.解决了重复读写的问题
+主要是：
+3.1 如果读取进那个容器的话，会不断将容器里的内容放进去，所以读取之前应该清空一次
+3.2 在写数据的时候，最开始是直接写，但是同样的读取之后再写有会重复。如果不读取不会有。
+为了解决这个问题，首先那就采用直接新写一个完整的文本，但是有可能你没有读取文本，所以会导致之前的删除
+故在写数据的时候要读一次，可以保证在添加元素的时候是在原基础上添加的，然后也不采用后add的方式，直接创建一个新的
+
+
+如果写文件用一个临时的也可以，但是写了之后再去打印排序不能立即生效，需要再读取一次文件
+*/
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <time.h>
 #include <Windows.h>
+#include <string>
+#include <fstream>//读写内容
 using namespace std;
 void printinf();
+void writedata(vector<float>&vec);
 void printdata(vector<float>vec);
+void readdata(vector<float>&vec);
 void deletedate(vector<float>&vec1);
 void Select(vector<float> vec1);
 int main()
@@ -28,8 +45,12 @@ void Select(vector<float> vec1)
         cin >> sel;
         switch (sel)
         {
+        case '0':
+        readdata(vec1);
+        break;
         case '1':
         char choose;
+        readdata(vec1);
         while(true)
             {
                 cout << "输入你想要存储的数据:data= " ;
@@ -40,7 +61,8 @@ void Select(vector<float> vec1)
                 cin >> choose;
                 if (choose!='Y' && choose != 'y'){break;}
             }
-        printdata(vec1);
+            cout << "读取数据中……" << endl;
+        writedata(vec1);
 
         break;
         case '2':
@@ -107,7 +129,8 @@ void printinf()
     cout << "                   *版本信息：1.0                *" << endl;
     cout << "                   *版权所有：HITszer@mycs       *" << endl;
     cout << "                   **---------------------------**"  <<endl;
-    cout << "                   *       1：储存数据           *" << endl;
+    cout << "                   *       0：读取数据库数据     *" << endl;
+    cout << "                   *       1：储存新数据         *" << endl;
     cout << "                   *       2：查找数据           *" << endl;
     cout << "                   *       3：删除数据           *" << endl;
     cout << "                   *       4：升序打印           *" << endl;
@@ -145,4 +168,45 @@ void deletedate(vector<float>&vec1)
             }
             cout << "当前的数据为: ";
             printdata(vec1);
+}
+void writedata(vector<float>&vec)
+{
+    fstream file;
+    file.open("C:\\Users\\ASUS\\Documents\\VS code\\interator_data.txt");
+    if(!file.is_open())
+    {
+        cout << "打开文件失败!" << endl;
+        Sleep(2000);
+        exit(-1);
+    }
+    string temp;
+    for(vector<float>::iterator it=vec.begin();it!=vec.end();it++)
+    {
+        temp = to_string(*it);              //将数值转换为文本stirng类型
+        file << temp << endl;
+    }
+    Sleep(1000);
+    cout << "写入数据成功!" << endl;
+    file.close();
+}
+void readdata(vector<float>&vec)
+{
+    vec.clear();
+    ifstream file;
+    file.open("C:\\Users\\ASUS\\Documents\\VS code\\interator_data.txt");
+    if(!file.is_open())
+    {
+        cout << "打开文件失败!" << endl;
+        Sleep(2000);
+        exit(-1);
+    }
+    string data;
+    while (!file.eof())
+	{
+		file >> data;
+		vec.push_back(stof(data));
+	}
+    vec.pop_back();
+    cout << "读取数据成功!" << endl;
+    file.close();
 }
