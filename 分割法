@@ -1,0 +1,42 @@
+#include <iostream>
+using namespace std;
+int main()
+{
+    int number[8];
+    cout << "请输入八个数据" << endl;
+    int temp;
+    for(int i = 0;i<8;i++)
+    {
+        cout << "第" << i+1 << "个数据" << endl;
+        cin >> temp;
+        number[i] = temp;
+    }
+    cout << "排序之前的结果" << endl;
+    for(int i = 0;i<8;i++)
+    {
+        cout << number[i] << '\t'; 
+    }
+    cout << endl;
+    int i=-1;
+    int j=0;
+    for(;j<7;j++)
+    {
+        if(number[j]<=number[7])
+        {
+            i++;
+            temp=number[i];
+            number[i]=number[j];
+            number[j]=temp;
+        }
+    }
+    temp=number[i+1];
+    number[i+1]=number[7];
+    number[7]=temp;
+
+    cout << "排序后的结果" << endl;
+    for(int i = 0;i<8;i++)
+    {
+        cout << number[i] << '\t'; 
+    }
+    system("pause");
+}
